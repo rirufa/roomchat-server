@@ -3,7 +3,7 @@ class SocketIoBaseController
   constructor: (io,name)->
     namespace = io.of(name)
     namespace.use((socket, next) =>
-      if @onAuth(socket.handshake.query)
+      if @onAuth(socket.handshake)
         return next()
       return next(new Error('authentication error'))
     ).on('connection', (socket) =>
@@ -14,7 +14,7 @@ class SocketIoBaseController
   onConnect: (namespace,socket)->
     return
 
-  onAuth: (query)->
+  onAuth: (handshake)->
     return true
 
 module.exports = SocketIoBaseController
