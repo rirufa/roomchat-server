@@ -1,50 +1,57 @@
 class ApiBaseController
-  @ENTRYPOINT = '/'
-  constructor:(router,name)->
+  @ENTRYPOINT = null
+  init:(router,name)->
     router.get(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
-      param = @onGet(req,res)
-      res.send(param)
+      @onGetAsync(req,res).then((param)->
+        res.send(param)
+      )
     )
     router.post(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
-      param = @onPost(req,res)
-      res.send(param)
+      @onPostAsync(req,res).then((param)->
+        res.send(param)
+      )
     )
     router.put(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
-      param = @onPut(req,res)
-      res.send(param)
+      @onPutAsync(req,res).then((param)->
+        res.send(param)
+      )
     )
     router.delete(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
-      param = @onDelete(req,res)
-      res.send(param)
+      @onDeleteAsync(req,res).then((param)->
+        res.send(param)
+      )
     )
     router.patch(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
-      param = @onPatch(req,res)
-      res.send(param)
+      @onPatchAsync(req,res).then((param)->
+        res.send(param)
+      )
     )
   verifyApi: (req,res,next)=>
-    if(@onAuth(req.body, req.query, req.headers))
-      next()
-    else
-      res.send(@onAuthFailed())
-  onAuth: (body, query, headers)->
-    return true
+    @onAuthAsync(req.body, req.query, req.headers).then((result)=>
+      if result == true
+        next()
+      else
+        res.send(@onAuthFailed())
+    )
+  onAuthAsync: (body, query, headers)->
+    Promise.resolve(true)
   onAuthFailed: ()->
-    return {"message":"require auth or auth failed"}
-  onGet: (req,res)->
-    return {}
-  onPost: (req,res)->
-    return {}
-  onPut: (req,res)->
-    return {}
-  onDelete: (req,res)->
-    return {}
-  onPatch: (req,res)->
-    return {}
+    return {message:"require auth or auth failed"}
+  onGetAsync: (req,res)->
+    Promise.resolve({})
+  onPostAsync: (req,res)->
+    Promise.resolve({})
+  onPutAsync: (req,res)->
+    Promise.resolve({})
+  onDeleteAsync: (req,res)->
+    Promise.resolve({})
+  onPatchAsync: (req,res)->
+    Promise.resolve({})
 
 module.exports = ApiBaseController
 

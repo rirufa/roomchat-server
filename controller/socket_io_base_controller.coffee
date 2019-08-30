@@ -1,6 +1,6 @@
 class SocketIoBaseController
-  @ENTRYPOINT = '/'
-  constructor: (io,name)->
+  @ENTRYPOINT = null
+  init: (io,name)->
     namespace = io.of(name)
     namespace.use((socket, next) =>
       if @onAuth(socket.handshake)
