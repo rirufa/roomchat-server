@@ -4,7 +4,7 @@ Schema = mongoose.Schema
 
 
 class UserModel
-  UserSchema = new Schema({userid: String, password:String, name: String, title: String})
+  UserSchema = new Schema({userid: String, password:String, name: String, description: String})
   User = mongoose.model('User', UserSchema)
 
   @auth: (param)->
@@ -16,7 +16,7 @@ class UserModel
    return user
 
   @add: (param)->
-   item = new User({userid:param.userid, password:param.password, title:param.title})
+   item = new User({userid:param.userid, password:param.password, name:param.name ,description:param.description})
    await item.save()
 
 module.exports = UserModel
