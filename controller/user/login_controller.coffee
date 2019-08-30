@@ -10,7 +10,7 @@ class LoginController extends ApiBaseController
     result = await UserModel.auth({userid:req_param.userid, password:req_param.password})
     if result
       user = await UserModel.get({userid:req_param.userid})
-      token = jwt.sign(user.toJSON(), superSecret,{expiresIn: "24h"})
+      token = jwt.sign(user.toJSON(), LoginController.superSecret,{expiresIn: "24h"})
       return {
         sucess: true,
         message: "Authentication successfully finished.",

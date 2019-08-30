@@ -1,7 +1,7 @@
 ApiBaseController = require('../api_base_controller')
 LoginController = require('./login_controller')
 
-class AuthBaseController extends ApiBaseController
+class AuthApiBaseController extends ApiBaseController
   @ENTRYPOINT = null
   decoded = null
 
@@ -18,4 +18,4 @@ class AuthBaseController extends ApiBaseController
        @decoded = decoded
        Promise.resolve(true)
 
-module.exports = AuthBaseController
+module.exports = AuthApiBaseController

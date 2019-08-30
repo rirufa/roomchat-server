@@ -1,6 +1,6 @@
-AuthBaseController = require('./auth_base_controller')
+AuthApiBaseController = require('./auth_api_base_controller')
 
-class ExampleController extends AuthBaseController
+class ExampleController extends AuthApiBaseController
   @ENTRYPOINT = '/api/v1/example'
 
   onGetAsync: (req,res)->
