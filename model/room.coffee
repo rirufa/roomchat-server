@@ -21,6 +21,7 @@ class RoomModel
 
   @add: (param)->
    item = new Room({name:param.name ,description:param.description ,users:param.users})
-   await item.save()
+   room = await item.save()
+   return {id:room.id, name:room.name, description:room.description,users:room.users}
 
 module.exports = RoomModel

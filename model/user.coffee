@@ -22,10 +22,11 @@ class UserModel
    if user == null
      return {}
    else
-     return {userid:user.userid, name:user.name, description:user.description}
+     return {id: user.id, userid:user.userid, name:user.name, description:user.description}
 
   @add: (param)->
    item = new User({userid:param.userid, password:param.password, name:param.name ,description:param.description})
-   await item.save()
+   user = await item.save()
+   return {id: user.id, userid:user.userid, name:user.name, description:user.description}
 
 module.exports = UserModel

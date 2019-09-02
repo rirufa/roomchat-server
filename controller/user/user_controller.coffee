@@ -16,9 +16,10 @@ class UserController extends ApiBaseController
 
   onPostAsync: (req,res)->
     req_param = req.body
-    await UserModel.add({userid:req_param.userid, password:req_param.password, name:req_param.name , description:req_param.description})
+    user = await UserModel.add({userid:req_param.userid, password:req_param.password, name:req_param.name , description:req_param.description})
     return {
       sucess: true
+      content: user
     } 
 
 module.exports = UserController
