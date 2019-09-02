@@ -5,10 +5,13 @@ class UserController extends ApiBaseController
   @ENTRYPOINT = '/api/v1/user'
   onGetAsync: (req,res)->
     req_param = req.body
-    user = await UserModel.get({userid:req_param.userid})
+    if typeof req_param.id == "undefined"
+      users = await UserModel.get_all()
+    else
+      users = await UserModel.get({id:req_param.id})
     return {
       sucess: true,
-      content: {userid:user.userid, name:user.name, description:user.description}
+      content: users
     }
 
   onPostAsync: (req,res)->
