@@ -14,12 +14,13 @@ class RoomController extends ApiBaseController
       content: rooms
     }
 
+
   onPostAsync: (req,res)->
     req_param = req.body
-    room = await RoomModel.add({name:req_param.name , description:req_param.description})
+    room = await RoomModel.add({name:req_param.name, description:req_param.description, users: req_param.users})
     return {
       sucess: true
       content: room
-    } 
+    }
 
 module.exports = RoomController

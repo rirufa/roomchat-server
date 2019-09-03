@@ -3,7 +3,7 @@ mongoose = require 'mongoose'
 Schema = mongoose.Schema
 
 class MessageModel
-  MessageSchema = new Schema({roomid:Number, senderid:Number, timestamp:Date ,content:String})
+  MessageSchema = new Schema({roomid:{ type: Schema.Types.ObjectId, ref: 'Room' }, senderid:{ type: Schema.Types.ObjectId, ref: 'User' }, timestamp:Date ,content:String})
   Message = mongoose.model('Message', MessageSchema)
 
   @get_all: (param)->
