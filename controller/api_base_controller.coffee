@@ -5,30 +5,40 @@ class ApiBaseController
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onGetAsync(req,res).then((param)->
         res.send(param)
+      ).catch((e)=>
+        res.send(@onError(e))
       )
     )
     router.post(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onPostAsync(req,res).then((param)->
         res.send(param)
+      ).catch((e)=>
+        res.send(@onError(e))
       )
     )
     router.put(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onPutAsync(req,res).then((param)->
         res.send(param)
+      ).catch((e)=>
+        res.send(@onError(e))
       )
     )
     router.delete(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onDeleteAsync(req,res).then((param)->
         res.send(param)
+      ).catch((e)=>
+        res.send(@onError(e))
       )
     )
     router.patch(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onPatchAsync(req,res).then((param)->
         res.send(param)
+      ).catch((e)=>
+        res.send(@onError(e))
       )
     )
   verifyApi: (req,res,next)=>
@@ -41,7 +51,9 @@ class ApiBaseController
   onAuthAsync: (body, query, headers)->
     Promise.resolve(true)
   onAuthFailed: ()->
-    return {message:"require auth or auth failed"}
+    return {success: false, error:"require auth or auth failed"}
+  onError: (e)->
+    return {success: false, error:"invaild request"}
   onGetAsync: (req,res)->
     Promise.resolve({})
   onPostAsync: (req,res)->

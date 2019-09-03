@@ -16,8 +16,6 @@ class UserModel
    return ({id:user.id, userid:user.userid, name:user.name, description:user.description} for user in users)
 
   @get: (param)->
-   if !mongoose.Types.ObjectId.isValid(param.id)
-     return {}
    user = await User.findById(param.id).exec()
    if user == null
      return {}
