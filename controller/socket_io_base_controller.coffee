@@ -3,9 +3,11 @@ class SocketIoBaseController
   init: (io,name)->
     namespace = io.of(name)
     namespace.use((socket, next) =>
-      if @onAuth(socket.handshake)
-        return next()
-      return next(new Error('authentication error'))
+      @onAuthAsync(socket.handshake).then((result)->
+        if result
+          return next()
+        return next(new Error('authentication error'))
+      )
     ).on('connection', (socket) =>
       console.log 'connected'
       @onConnect namespace,socket
@@ -14,7 +16,7 @@ class SocketIoBaseController
   onConnect: (namespace,socket)->
     return
 
-  onAuth: (handshake)->
-    return true
+  onAuthAsync: (handshake)->
+    Promise.resolve(true)
 
 module.exports = SocketIoBaseController
