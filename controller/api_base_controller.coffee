@@ -1,7 +1,7 @@
 class ApiBaseController
   @ENTRYPOINT = null
-  init:(router,name)->
-    router.get(name, @verifyApi, (req,res,next)=>
+  init:(app,name)->
+    app.get(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onGetAsync(req,res).then((param)->
         res.send(param)
@@ -9,7 +9,7 @@ class ApiBaseController
         res.send(@onError(e))
       )
     )
-    router.post(name, @verifyApi, (req,res,next)=>
+    app.post(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onPostAsync(req,res).then((param)->
         res.send(param)
@@ -17,7 +17,7 @@ class ApiBaseController
         res.send(@onError(e))
       )
     )
-    router.put(name, @verifyApi, (req,res,next)=>
+    app.put(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onPutAsync(req,res).then((param)->
         res.send(param)
@@ -25,7 +25,7 @@ class ApiBaseController
         res.send(@onError(e))
       )
     )
-    router.delete(name, @verifyApi, (req,res,next)=>
+    app.delete(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onDeleteAsync(req,res).then((param)->
         res.send(param)
@@ -33,7 +33,7 @@ class ApiBaseController
         res.send(@onError(e))
       )
     )
-    router.patch(name, @verifyApi, (req,res,next)=>
+    app.patch(name, @verifyApi, (req,res,next)=>
       res.header 'Content-Type', 'application/json; charset=utf-8'
       @onPatchAsync(req,res).then((param)->
         res.send(param)
