@@ -7,6 +7,9 @@ class UserModel
   UserSchema = new Schema({userid: String, password:String, name: String, description: String})
   User = mongoose.model('User', UserSchema)
 
+  @get_schema: ()->
+    return User
+
   @auth: (param)->
    user = await User.findOne({userid: param.userid}).exec()
    return user.userid == param.userid && user.password == param.password

@@ -6,6 +6,9 @@ class RoomModel
   RoomSchema = new Schema({name:String,description:String,users:[{ type: Schema.Types.ObjectId, ref: 'User' }]})
   Room = mongoose.model('Room', RoomSchema)
 
+  @get_schema: ()->
+    return Room
+
   @get_all: ()->
    rooms = await Room.find({}).exec()
    return ({id:room.id, name:room.name, description:room.description,users:room.users} for room in rooms)

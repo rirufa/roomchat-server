@@ -24,6 +24,17 @@ db.on('error', console.error.bind(console, 'connection error:'))
 
 pluginLoader = require('./plugin-reader').loadPlugin
 
+#GraphQL
+schemaComposer = require('graphql-compose').schemaComposer
+graphqlExpress = require('express-graphql')
+GrahqlBaseSchema = require('./controller/grahql_base_schema')
+pluginLoader('./controller/schema', (r)->
+  item = new r()
+  schemaComposer = item.build(schemaComposer)
+)
+schema = schemaComposer.buildSchema()
+app.use("/graphql", bodyParser.json(), graphqlExpress({schema , graphiql: true }))
+
 #apis
 ApiBaseController = require('./controller/api_base_controller')
 SocketIoBaseController = require('./controller/socket_io_base_controller')
