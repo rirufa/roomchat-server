@@ -3,19 +3,20 @@ GrahqlBaseSchema = require('../grahql_base_schema')
 
 class UserSchema extends GrahqlBaseSchema
   OnDefineSchema: (schemaComposer,composeWithMongoose)->
-    # パスワードは外部に見せない
-    customizationOptions = {
-      fields: {
-        remove: ['password'],
-      }
-    }
-    User = composeWithMongoose(UserModel.get_schema(), customizationOptions);
+    User = composeWithMongoose(UserModel.get_schema(), {});
+
+    # パスワードを外部に出すとまずいので消す
+    removePasswordResolver = (next) => (rp) =>
+      delete rp.projection.password
+      payload = await next(rp)
+      console.log payload
+      return payload
 
     schemaComposer.Query.addFields({
-        userById: User.getResolver('findById'),
-        userByIds: User.getResolver('findByIds'), 
-        userOne: User.getResolver('findOne'), 
-        userMany: User.getResolver('findMany'), 
+        userById: User.getResolver('findById').wrapResolve(removePasswordResolver),
+        userByIds: User.getResolver('findByIds').wrapResolve(removePasswordResolver), 
+        userOne: User.getResolver('findOne').wrapResolve(removePasswordResolver), 
+        userMany: User.getResolver('findMany').wrapResolve(removePasswordResolver),
         userCount: User.getResolver('count'), 
         userConnection: User.getResolver('connection'), 
         userPagination: User.getResolver('pagination') 
