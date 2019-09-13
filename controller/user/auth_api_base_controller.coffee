@@ -1,5 +1,5 @@
 ApiBaseController = require('../api_base_controller')
-LoginController = require('./login_controller')
+LoginService = require('../../service/login_service')
 
 class AuthApiBaseController extends ApiBaseController
   @ENTRYPOINT = null
@@ -7,15 +7,11 @@ class AuthApiBaseController extends ApiBaseController
 
   onAuthAsync: (body, query, headers)=>
      token = body.token || query.token || headers["x-access-token"]
-     # validate token
-     if !token
-       Promise.resolve(false)
-
-     jwt = require "jsonwebtoken"
-     jwt.verify token, LoginController.superSecret, (err, decoded) =>
-       if err
-         Promise.resolve(false)
+     decoded = await LoginService.verify(token)
+     if decoded == null
+       return Promise.resolve(false)
+     else
        @decoded = decoded
-       Promise.resolve(true)
+       return Promise.resolve(true)
 
 module.exports = AuthApiBaseController

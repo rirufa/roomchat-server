@@ -53,6 +53,7 @@ class ApiBaseController
   onAuthFailed: ()->
     return {success: false, error:"require auth or auth failed"}
   onError: (e)->
+    console.log e
     return {success: false, error:"invaild request"}
   onGetAsync: (req,res)->
     Promise.resolve({})
