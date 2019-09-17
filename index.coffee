@@ -29,8 +29,9 @@ schemaComposer = require('graphql-compose').schemaComposer
 graphqlExpress = require('express-graphql')
 GrahqlBaseSchema = require('./controller/grahql_base_schema')
 pluginLoader('./controller/schema', (r)->
-  item = new r()
-  schemaComposer = item.build(schemaComposer)
+  if r.name.indexOf('Base') == -1
+    item = new r()
+    schemaComposer = item.build(schemaComposer)
 )
 schema = schemaComposer.buildSchema()
 app.use("/graphql", bodyParser.json(), graphqlExpress({schema , graphiql: true }))

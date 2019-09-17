@@ -1,8 +1,8 @@
 RoomModel = require('../../model/room')
 UserModel = require('../../model/user')
-GrahqlBaseSchema = require('../grahql_base_schema')
+GrahqlAuthBaseSchema = require('./graphql_auth_base_schema')
 
-class RoomSchema extends GrahqlBaseSchema
+class RoomSchema extends GrahqlAuthBaseSchema
   OnDefineSchema: (composeWithMongoose)->
     Room = composeWithMongoose(RoomModel.get_schema(), {});
     User = composeWithMongoose(UserModel.get_schema(), {});

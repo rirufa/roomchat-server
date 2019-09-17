@@ -10,16 +10,16 @@ class GrahqlBaseSchema
    return sc
 
   OnParseResolver: (rp)->
-    return rp
+    return Promise.resolve(rp)
 
   OnParsePayload: (payload)->
-    return payload
+    return Promise.resolve(payload)
 
   RegistorWarpResolver: (resolvers)=>
     Object.keys(resolvers).forEach((k) =>
       fn = (next) => (rp) =>
-          parsed_rp = @OnParseResolver(rp)
-          payload = @OnParsePayload(await next(parsed_rp))
+          parsed_rp = await @OnParseResolver(rp)
+          payload = await @OnParsePayload(await next(parsed_rp))
           return payload
       resolvers[k] = resolvers[k].wrapResolve(fn)
     )

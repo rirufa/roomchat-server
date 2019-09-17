@@ -5,7 +5,7 @@ class UserSchema extends GrahqlBaseSchema
   OnParseResolver: (rp)->
     # パスワードを外部に出すとまずいので消す
     delete rp.projection.password
-    return rp
+    return Promise.resolve(rp)
   OnDefineSchema: (composeWithMongoose)->
     User = composeWithMongoose(UserModel.get_schema(), {});
 

@@ -1,9 +1,9 @@
 MessageModel = require('../../model/message')
 UserModel = require('../../model/user')
 RoomModel = require('../../model/room')
-GrahqlBaseSchema = require('../grahql_base_schema')
+GrahqlAuthBaseSchema = require('./graphql_auth_base_schema')
 
-class MessageSchema extends GrahqlBaseSchema
+class MessageSchema extends GrahqlAuthBaseSchema
   OnDefineSchema: (composeWithMongoose)->
     Message = composeWithMongoose(MessageModel.get_schema(), {});
     User = composeWithMongoose(UserModel.get_schema(), {});
