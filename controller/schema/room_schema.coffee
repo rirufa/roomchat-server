@@ -3,7 +3,7 @@ UserModel = require('../../model/user')
 GrahqlBaseSchema = require('../grahql_base_schema')
 
 class RoomSchema extends GrahqlBaseSchema
-  OnDefineSchema: (schemaComposer,composeWithMongoose)->
+  OnDefineSchema: (composeWithMongoose)->
     Room = composeWithMongoose(RoomModel.get_schema(), {});
     User = composeWithMongoose(UserModel.get_schema(), {});
 
@@ -18,7 +18,7 @@ class RoomSchema extends GrahqlBaseSchema
       }
     )
 
-    schemaComposer.Query.addFields({
+    query = {
         roomById: Room.getResolver('findById'),
         roomByIds: Room.getResolver('findByIds'), 
         roomOne: Room.getResolver('findOne'), 
@@ -26,9 +26,9 @@ class RoomSchema extends GrahqlBaseSchema
         roomCount: Room.getResolver('count'), 
         roomConnection: Room.getResolver('connection'), 
         roomPagination: Room.getResolver('pagination') 
-    })
+    }
 
-    schemaComposer.Mutation.addFields({
+    mutation = {
         roomCreate: Room.getResolver('createOne'), 
         roomCreateMany: Room.getResolver('createMany'), 
         roomUpdateById: Room.getResolver('updateById'), 
@@ -37,7 +37,7 @@ class RoomSchema extends GrahqlBaseSchema
         roomRemoveById: Room.getResolver('removeById'), 
         roomRemoveOne: Room.getResolver('removeOne'), 
         roomRemoveMany: Room.getResolver('removeMany') 
-    })
-    return schemaComposer
+    }
+    return [query,mutation]
 
 module.exports = RoomSchema

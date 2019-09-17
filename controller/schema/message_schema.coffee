@@ -4,7 +4,7 @@ RoomModel = require('../../model/room')
 GrahqlBaseSchema = require('../grahql_base_schema')
 
 class MessageSchema extends GrahqlBaseSchema
-  OnDefineSchema: (schemaComposer,composeWithMongoose)->
+  OnDefineSchema: (composeWithMongoose)->
     Message = composeWithMongoose(MessageModel.get_schema(), {});
     User = composeWithMongoose(UserModel.get_schema(), {});
     Room = composeWithMongoose(RoomModel.get_schema(), {});
@@ -30,7 +30,7 @@ class MessageSchema extends GrahqlBaseSchema
       }
     )
 
-    schemaComposer.Query.addFields({
+    query = {
         messageById: Message.getResolver('findById'),
         messageByIds: Message.getResolver('findByIds'), 
         messageOne: Message.getResolver('findOne'), 
@@ -38,9 +38,9 @@ class MessageSchema extends GrahqlBaseSchema
         messageCount: Message.getResolver('count'), 
         messageConnection: Message.getResolver('connection'), 
         messagePagination: Message.getResolver('pagination') 
-    })
+    }
 
-    schemaComposer.Mutation.addFields({
+    mutation = {
         messageCreate: Message.getResolver('createOne'), 
         messageCreateMany: Message.getResolver('createMany'), 
         messageUpdateById: Message.getResolver('updateById'), 
@@ -49,7 +49,7 @@ class MessageSchema extends GrahqlBaseSchema
         messageRemoveById: Message.getResolver('removeById'), 
         messageRemoveOne: Message.getResolver('removeOne'), 
         messageRemoveMany: Message.getResolver('removeMany') 
-    })
-    return schemaComposer
+    }
+    return [query,mutation]
 
 module.exports = MessageSchema
