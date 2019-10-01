@@ -1,9 +1,12 @@
 class GrahqlBaseSchema
   build:(schemaComposer)->
     composeWithMongoose = require('graphql-compose-mongoose').composeWithMongoose
-    [query,mutation] = @OnDefineSchema(composeWithMongoose)
+    [query,mutation,subscription] = @OnDefineSchema(composeWithMongoose)
     schemaComposer.Query.addFields(@RegistorWarpResolver(query))
-    schemaComposer.Mutation.addFields(@RegistorWarpResolver(mutation))
+    if mutation?
+      schemaComposer.Mutation.addFields(@RegistorWarpResolver(mutation))
+    if subscription?
+      schemaComposer.Subscription.addFields(@RegistorWarpResolver(subscription))
     return schemaComposer
    
   OnDefineSchema: (cm)->
