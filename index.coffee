@@ -30,7 +30,7 @@ pluginLoader = require('./plugin-reader').loadPlugin
 
 #GraphQL
 schemaComposer = require('graphql-compose').schemaComposer
-graphqlExpress = require('express-graphql')
+ApolloServer = require('apollo-server-express').ApolloServer
 GrahqlBaseSchema = require('./controller/grahql_base_schema')
 pluginLoader('./controller/schema', (r)->
   if r.name.indexOf('Base') == -1
@@ -38,7 +38,8 @@ pluginLoader('./controller/schema', (r)->
     schemaComposer = item.build(schemaComposer)
 )
 schema = schemaComposer.buildSchema()
-app.use("/graphql", bodyParser.json(), graphqlExpress({schema , graphiql: true }))
+server = new ApolloServer({schema: schema , graphiql: true })
+server.applyMiddleware({ app, path: '/graphql' });
 
 #apis
 ApiBaseController = require('./controller/api_base_controller')
