@@ -14,6 +14,10 @@ class ChatController extends SocketIoBaseController
        @decoded = decoded
        return Promise.resolve(true)
   onConnect: (chat,socket)->
+    socket.on 'join', (msg) ->
+      socket.join msg.roomid
+    socket.on 'send', (msg) ->
+      chat.to(msg.roomid).emit 'receive', msg
     socket.on 'sendall', (msg) ->
       chat.emit 'receive', msg
     return
