@@ -18,9 +18,15 @@ class GrahqlBaseSchema
   OnParsePayload: (payload)->
     return Promise.resolve(payload)
 
+  OnAuth: (rp)->
+    return Promise.resolve(true)
+
   RegistorWarpResolver: (resolvers)=>
     Object.keys(resolvers).forEach((k) =>
       fn = (next) => (rp) =>
+          result = await @OnAuth(rp)
+          if result == false
+            throw new Error('You should auth to have access to this action')
           parsed_rp = await @OnParseResolver(rp)
           payload = await @OnParsePayload(await next(parsed_rp))
           return payload

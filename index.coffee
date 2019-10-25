@@ -32,13 +32,22 @@ pluginLoader = require('./plugin-reader').loadPlugin
 schemaComposer = require('graphql-compose').schemaComposer
 ApolloServer = require('apollo-server-express').ApolloServer
 GrahqlBaseSchema = require('./controller/grahql_base_schema')
+LoginService = require('./service/login_service')
 pluginLoader('./controller/schema', (r)->
   if r.name.indexOf('Base') == -1
     item = new r()
     schemaComposer = item.build(schemaComposer)
 )
 schema = schemaComposer.buildSchema()
-server = new ApolloServer({schema: schema , graphiql: true })
+server = new ApolloServer({
+  schema: schema ,
+  graphiql: true ,
+  context:(req)=>
+    headers = req.req.headers
+    token = headers["x-access-token"]
+    decoded = await LoginService.verify token
+    return authed: decoded != null
+})
 server.applyMiddleware({ app, path: '/graphql' });
 
 #apis
