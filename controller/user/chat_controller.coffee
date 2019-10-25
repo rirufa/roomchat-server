@@ -14,12 +14,20 @@ class ChatController extends SocketIoBaseController
        @decoded = decoded
        return Promise.resolve(true)
   onConnect: (chat,socket)->
-    socket.on 'join', (msg) ->
+    socket.on 'join', (msg, cb) ->
       socket.join msg.roomid
-    socket.on 'send', (msg) ->
-      chat.to(msg.roomid).emit 'receive', msg
-    socket.on 'sendall', (msg) ->
-      chat.emit 'receive', msg
+      cb({sucess: true})
+    socket.on 'fetchall', (msg, cb)->
+      msgs = await MessageModel.get_all({roomid:msg.roomid})
+      chat.to(msg.roomid).emit 'receive', msgs
+      cb({sucess: true})
+    socket.on 'send', (msg, cb) ->
+      await MessageModel.add({roomid:msg.roomid, senderid:msg.senderid, content:msg.content})  
+      chat.to(msg.roomid).emit 'receive', [msg]
+      cb({sucess: true})
+    socket.on 'sendall', (msg, cb) ->
+      chat.emit 'receive', [msg]
+      cb({sucess: true})
     return
 
 module.exports = ChatController
