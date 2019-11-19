@@ -1,42 +1,49 @@
 RoomModel = require('../../model/room')
-UserModel = require('../../model/user')
 GrahqlAuthBaseSchema = require('./graphql_auth_base_schema')
 
 class RoomSchema extends GrahqlAuthBaseSchema
-  OnDefineSchema: (composeWithMongoose)->
-    Room = composeWithMongoose(RoomModel.get_schema(), {});
-    User = composeWithMongoose(UserModel.get_schema(), {});
-
-    Room.addRelation(
-      'users',
-      {
-        resolver: () => User.getResolver('findByIds'),
-        prepareArgs: {
-          _ids: (source) =>source.users
-        },
-        projection: { users: 1 },
+  OnDefineSchema: (schemaComposer)->
+    RoomTC = schemaComposer.createObjectTC("
+      type Room{
+        name:String,
+        description:String,
+        users:[String]
       }
-    )
+    ")
+    RoomTC.addResolver({
+      kind: 'query',
+      name: 'findByRoomID',
+      args: {
+        filter: "input RoomFilterInput {
+          id: String
+        }",
+      },
+      type: RoomTC,
+      resolve: ({ args, context }) =>
+        return await RoomModel.get({id:args.filter.id})
+      ,
+    })
+    RoomTC.addResolver({
+      kind: 'mutation',
+      name: 'createOne',
+      args: {
+        record: "input RoomRecordInput{
+          name:String!,
+          description:String,
+        }"
+      },
+      type: RoomTC,
+      resolve: ({ args, context }) =>
+        return await RoomModel.add(args.record)
+      ,
+    })
 
     query = {
-        roomById: Room.getResolver('findById'),
-        roomByIds: Room.getResolver('findByIds'), 
-        roomOne: Room.getResolver('findOne'), 
-        roomMany: Room.getResolver('findMany'), 
-        roomCount: Room.getResolver('count'), 
-        roomConnection: Room.getResolver('connection'), 
-        roomPagination: Room.getResolver('pagination') 
+        roomByRoomID: RoomTC.getResolver('findByRoomID'),
     }
 
     mutation = {
-        roomCreate: Room.getResolver('createOne'), 
-        roomCreateMany: Room.getResolver('createMany'), 
-        roomUpdateById: Room.getResolver('updateById'), 
-        roomUpdateOne: Room.getResolver('updateOne'), 
-        roomUpdateMany: Room.getResolver('updateMany'), 
-        roomRemoveById: Room.getResolver('removeById'), 
-        roomRemoveOne: Room.getResolver('removeOne'), 
-        roomRemoveMany: Room.getResolver('removeMany') 
+        roomCreateOne: RoomTC.getResolver('createOne'), 
     }
     return [query,mutation]
 

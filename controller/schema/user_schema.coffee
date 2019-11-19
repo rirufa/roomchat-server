@@ -6,28 +6,51 @@ class UserSchema extends GrahqlBaseSchema
     # パスワードを外部に出すとまずいので消す
     delete rp.projection.password
     return Promise.resolve(rp)
-  OnDefineSchema: (composeWithMongoose)->
-    User = composeWithMongoose(UserModel.get_schema(), {});
+  OnDefineSchema: (schemaComposer)->
+    UserTC = schemaComposer.createObjectTC("
+      type User{
+        id: String,
+        userid: String,
+        password:String,
+        name: String,
+        description: String
+    }")
+    UserTC.addResolver({
+      kind: 'query',
+      name: 'findByID',
+      args: {
+        filter: "input UserFilterInput {
+          id: String!
+        }",
+      },
+      type: UserTC,
+      resolve: ({ args, context }) =>
+        return await UserModel.get({id:args.filter.id})
+      ,
+    })
+    UserTC.addResolver({
+      kind: 'mutation',
+      name: 'createOne',
+      args: {
+        record: "input UserRecordInput{
+          userid: String!,
+          password:String!,
+          name: String,
+          description: String
+        }"
+      }
+      type: UserTC,
+      resolve: ({ args, context }) =>
+        return await UserModel.add(args.record)
+      ,
+    })
 
     query = {
-        userById: User.getResolver('findById'),
-        userByIds: User.getResolver('findByIds'), 
-        userOne: User.getResolver('findOne'), 
-        userMany: User.getResolver('findMany'),
-        userCount: User.getResolver('count'), 
-        userConnection: User.getResolver('connection'), 
-        userPagination: User.getResolver('pagination') 
+        userByID: UserTC.getResolver('findByID'),
     }
 
     mutation = {
-        userCreate: User.getResolver('createOne'), 
-        userCreateMany: User.getResolver('createMany'), 
-        userUpdateById: User.getResolver('updateById'), 
-        userUpdateOne: User.getResolver('updateOne'), 
-        userUpdateMany: User.getResolver('updateMany'), 
-        userRemoveById: User.getResolver('removeById'), 
-        userRemoveOne: User.getResolver('removeOne'), 
-        userRemoveMany: User.getResolver('removeMany') 
+        userCreate: UserTC.getResolver('createOne'), 
     }
     return [query,mutation]
 
