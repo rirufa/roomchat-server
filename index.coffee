@@ -44,6 +44,10 @@ server = new ApolloServer({
   graphiql: true ,
   context:({req, connection} )=>
     if connection
+      token = connection.context["x-access-token"]
+      decoded = await LoginService.verify token
+      if decoded == null
+        throw new Error("auth required")
       return connection.context
     headers = req.headers
     token = headers["x-access-token"]
