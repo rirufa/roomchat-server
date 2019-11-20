@@ -42,13 +42,16 @@ schema = schemaComposer.buildSchema()
 server = new ApolloServer({
   schema: schema ,
   graphiql: true ,
-  context:(req)=>
-    headers = req.req.headers
+  context:({req, connection} )=>
+    if connection
+      return connection.context
+    headers = req.headers
     token = headers["x-access-token"]
     decoded = await LoginService.verify token
     return authed: decoded != null
 })
-server.applyMiddleware({ app, path: '/graphql' });
+server.applyMiddleware({ app, path: '/graphql' })
+server.installSubscriptionHandlers(http)
 
 #apis
 ApiBaseController = require('./controller/api_base_controller')

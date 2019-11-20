@@ -1,5 +1,6 @@
 MessageModel = require('../../model/message')
 GrahqlAuthBaseSchema = require('./graphql_auth_base_schema')
+{ PubSub } = require('apollo-server')
 
 class MessageSchema extends GrahqlAuthBaseSchema
   OnDefineSchema: (schemaComposer)->
@@ -24,6 +25,8 @@ class MessageSchema extends GrahqlAuthBaseSchema
         return await MessageModel.get_all({roomid:args.filter.roomid})
       ,
     })
+    pubsub = new PubSub()
+    MESSAGE_ADDED = 'MESSAGE_ADDED'
     MessageTC.addResolver({
       kind: 'mutation',
       name: 'createOne',
@@ -37,10 +40,10 @@ class MessageSchema extends GrahqlAuthBaseSchema
       },
       type: MessageTC,
       resolve: ({ args, context }) =>
+        pubsub.publish(MESSAGE_ADDED, { messageAdded: args });
         return await MessageModel.add(args.record)
       ,
     })
-
     query = {
         messageById: MessageTC.getResolver('findManyByRoomID'),
     }
@@ -48,6 +51,19 @@ class MessageSchema extends GrahqlAuthBaseSchema
     mutation = {
         messageCreate: MessageTC.getResolver('createOne'), 
     }
-    return [query,mutation]
+
+    # subscribe‚¾‚¯ˆÈ‰º‚Ì‚æ‚¤‚É’è‹`‚µ‚È‚¢‚Æ“®‚©‚È‚¢
+    # https://github.com/graphql-compose/graphql-compose-boilerplate
+    subscription = {
+        messageAdded:{
+          type: MessageTC,
+          resolve: (payload) =>
+            return payload.messageAdded.record
+          ,
+          subscribe: () => pubsub.asyncIterator('MESSAGE_ADDED'),        
+        }
+    }
+
+    return [query,mutation,subscription]
 
 module.exports = MessageSchema

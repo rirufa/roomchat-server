@@ -29,7 +29,8 @@ class GrahqlBaseSchema
           parsed_rp = await @OnParseResolver(rp)
           payload = await @OnParsePayload(await next(parsed_rp))
           return payload
-      resolvers[k] = resolvers[k].wrapResolve(fn)
+      if typeof resolvers[k].wrapResolve == 'function'
+        resolvers[k] = resolvers[k].wrapResolve(fn)
     )
     return resolvers
 
