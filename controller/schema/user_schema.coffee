@@ -9,7 +9,6 @@ class UserSchema extends GrahqlBaseSchema
   OnDefineSchema: (schemaComposer)->
     UserTC = schemaComposer.createObjectTC("
       type User{
-        id: String,
         userid: String,
         password:String,
         name: String,
@@ -26,6 +25,19 @@ class UserSchema extends GrahqlBaseSchema
       type: UserTC,
       resolve: ({ args, context }) =>
         return await UserModel.get({id:args.filter.id})
+      ,
+    })
+    UserTC.addResolver({
+      kind: 'query',
+      name: 'findByIDs',
+      args: {
+        filter: "input UserFilterInput {
+          ids: [String!]
+        }",
+      },
+      type: [UserTC],
+      resolve: ({ args, context }) =>
+        return await UserModel.get_by_ids({ids:args.filter.ids})
       ,
     })
     UserTC.addResolver({

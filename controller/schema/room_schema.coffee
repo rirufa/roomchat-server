@@ -37,6 +37,16 @@ class RoomSchema extends GrahqlAuthBaseSchema
         return await RoomModel.add(args.record)
       ,
     })
+    RoomTC.addRelation(
+      'users',
+      {
+        resolver: () => schemaComposer.getAnyTC("User").getResolver("findByIDs"),
+        prepareArgs: {
+          filter: (source) => {ids:source.users},
+        },
+        projection: { senderid: 1 },
+      }
+    )
 
     query = {
         roomByRoomID: RoomTC.getResolver('findByRoomID'),

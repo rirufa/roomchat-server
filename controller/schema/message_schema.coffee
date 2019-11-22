@@ -1,4 +1,6 @@
 MessageModel = require('../../model/message')
+UserModel = require('../../model/user')
+RoomModel = require('../../model/room')
 GrahqlAuthBaseSchema = require('./graphql_auth_base_schema')
 { PubSub } = require('apollo-server')
 
@@ -12,6 +14,26 @@ class MessageSchema extends GrahqlAuthBaseSchema
         content:String
       }
     ")
+    MessageTC.addRelation(
+      'roomid',
+      {
+        resolver: () => schemaComposer.getAnyTC("Room").getResolver("findByRoomID"),
+        prepareArgs: {
+          filter: (source) => {id:source.roomid},
+        },
+        projection: { roomid: 1 },
+      }
+    )
+    MessageTC.addRelation(
+      'senderid',
+      {
+        resolver: () => schemaComposer.getAnyTC("User").getResolver("findByID"),
+        prepareArgs: {
+          filter: (source) => {id:source.senderid},
+        },
+        projection: { senderid: 1 },
+      }
+    )
     MessageTC.addResolver({
       kind: 'query',
       name: 'findManyByRoomID',
