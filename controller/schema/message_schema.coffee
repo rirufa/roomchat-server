@@ -2,7 +2,7 @@ MessageModel = require('../../model/message')
 UserModel = require('../../model/user')
 RoomModel = require('../../model/room')
 GrahqlAuthBaseSchema = require('./graphql_auth_base_schema')
-{ PubSub } = require('apollo-server')
+{ PubSub,withFilter } = require('apollo-server')
 
 class MessageSchema extends GrahqlAuthBaseSchema
   OnDefineSchema: (schemaComposer)->
@@ -82,7 +82,16 @@ class MessageSchema extends GrahqlAuthBaseSchema
           resolve: (payload) =>
             return payload.messageAdded.record
           ,
-          subscribe: () => pubsub.asyncIterator('MESSAGE_ADDED'),        
+          args: {
+            filter: "input MessageAddedInput{
+              roomid:String,
+            }"
+          },
+          subscribe: withFilter(
+            () => pubsub.asyncIterator('MESSAGE_ADDED'),
+            (payload, variables) =>
+              return payload.messageAdded.record.roomid == variables.filter.roomid
+          )
         }
     }
 
