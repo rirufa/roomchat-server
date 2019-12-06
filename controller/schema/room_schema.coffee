@@ -24,6 +24,21 @@ class RoomSchema extends GrahqlAuthBaseSchema
       ,
     })
     RoomTC.addResolver({
+      kind: 'query',
+      name: 'findMany',
+      args: {
+        limit: {
+          type: 'Int',
+          defaultValue: 20,
+        },
+        skip: 'Int',
+      },
+      type: [RoomTC],
+      resolve: ({ args, context }) =>
+        return await RoomModel.get_limit(args.limit, args.skip)
+      ,
+    })
+    RoomTC.addResolver({
       kind: 'mutation',
       name: 'createOne',
       args: {
@@ -50,6 +65,7 @@ class RoomSchema extends GrahqlAuthBaseSchema
 
     query = {
         roomByRoomID: RoomTC.getResolver('findByRoomID'),
+        roomMany: RoomTC.getResolver('findMany'),
     }
 
     mutation = {

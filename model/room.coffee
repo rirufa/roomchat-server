@@ -13,6 +13,10 @@ class RoomModel
    rooms = await Room.find({}).exec()
    return ({id:room.id, name:room.name, description:room.description,users:room.users} for room in rooms)
 
+  @get_limit: (limit,skip)->
+   rooms = await Room.find({}).limit(limit).skip(skip).exec()
+   return ({id:room.id, name:room.name, description:room.description,users:room.users} for room in rooms)
+
   @get: (param)->
    room = await Room.findById(param.id).exec()
    if room == null
