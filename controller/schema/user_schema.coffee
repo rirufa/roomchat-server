@@ -9,6 +9,7 @@ class UserSchema extends GrahqlBaseSchema
   OnDefineSchema: (schemaComposer)->
     UserTC = schemaComposer.createObjectTC("
       type User{
+        id:ID,
         userid: String,
         password:String,
         name: String,
@@ -41,6 +42,21 @@ class UserSchema extends GrahqlBaseSchema
       ,
     })
     UserTC.addResolver({
+      kind: 'query',
+      name: 'findMany',
+      args: {
+        limit: {
+          type: 'Int',
+          defaultValue: 20,
+        },
+        skip: 'Int',
+      },
+      type: [UserTC],
+      resolve: ({ args, context }) =>
+        return await UserModel.get_limit(args.limit, args.skip)
+      ,
+    })
+    UserTC.addResolver({
       kind: 'mutation',
       name: 'createOne',
       args: {
@@ -59,6 +75,7 @@ class UserSchema extends GrahqlBaseSchema
 
     query = {
         userByID: UserTC.getResolver('findByID'),
+        userMany: UserTC.getResolver('findMany'),
     }
 
     mutation = {

@@ -18,6 +18,10 @@ class UserModel
    users = await User.find({}).exec()
    return ({id:user.id, userid:user.userid, name:user.name, description:user.description} for user in users)
 
+  @get_limit: (limit,skip)->
+   users = await User.find({}).limit(limit).skip(skip).exec()
+   return ({id:user.id, userid:user.userid, name:user.name, description:user.description} for user in users)
+
   @get_by_ids: (param)->
    users = await User.find({}).where('_id').in(param.ids).exec()
    return ({id:user.id, userid:user.userid, name:user.name, description:user.description} for user in users)
