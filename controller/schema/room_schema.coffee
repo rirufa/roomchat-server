@@ -5,6 +5,7 @@ class RoomSchema extends GrahqlAuthBaseSchema
   OnDefineSchema: (schemaComposer)->
     RoomTC = schemaComposer.createObjectTC("
       type Room{
+        id:ID,
         name:String,
         description:String,
         users:[String]
