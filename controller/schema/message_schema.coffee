@@ -80,7 +80,7 @@ class MessageSchema extends GrahqlAuthBaseSchema
         messageAdded:{
           type: MessageTC,
           resolve: (payload) =>
-            return payload.messageAdded.record
+            return payload?.messageAdded.record
           ,
           args: {
             filter: "input MessageAddedInput{
