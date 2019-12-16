@@ -5,9 +5,10 @@ class LoginService
   @auth:(id,password)=>
     jwt = require "jsonwebtoken"
     result = await UserModel.auth({userid:id, password:password})
-    if result
-      user = await UserModel.get({userid:id})
-      return jwt.sign({userid:user.userid}, superSecret,{expiresIn: "24h"})
+    if result.sucess
+      user = result.content
+      token = jwt.sign({userid:user.userid}, superSecret,{expiresIn: "24h"})
+      return {token: token,id: user.id}
     else
       return null
 

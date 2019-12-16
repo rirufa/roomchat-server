@@ -11,7 +11,7 @@ class LoginController extends ApiBaseController
       return {
         sucess: true,
         message: "Authentication successfully finished.",
-        token: result
+        content: result
       } 
     else
       return {

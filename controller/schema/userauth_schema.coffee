@@ -7,7 +7,18 @@ class UserAuthSchema extends GrahqlBaseSchema
       type UserAuth{
         sucess: Boolean,
         token: String,
+        user: String,
     }")
+    UserAuthTC.addRelation(
+      'user',
+      {
+        resolver: () => schemaComposer.getAnyTC("User").getResolver("findByID"),
+        prepareArgs: {
+          filter: (source) => {id:source.user},
+        },
+        projection: { user: 1 },
+      }
+    )
     UserAuthTC.addResolver({
       kind: 'query',
       name: 'getToken',
@@ -23,12 +34,14 @@ class UserAuthSchema extends GrahqlBaseSchema
         if result != null
           return {
             sucess: true,
-            token: result
+            token: result.token,
+            user: result.id
           } 
         else
           return {
             sucess: false,
-            token: null
+            token: null,
+            user: null
           } 
       ,
     })

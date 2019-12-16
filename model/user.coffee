@@ -12,7 +12,9 @@ class UserModel
 
   @auth: (param)->
    user = await User.findOne({userid: param.userid}).exec()
-   return user.userid == param.userid && user.password == param.password
+   return {
+    sucess:user.userid == param.userid && user.password == param.password,
+    content: user}
 
   @get_all: ()->
    users = await User.find({}).exec()
